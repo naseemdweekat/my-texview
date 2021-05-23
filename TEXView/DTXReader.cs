@@ -330,7 +330,7 @@ namespace TEXView
                     //!--This type all image as big image.
                     DTXFile.Header.ImgCount = 1;
                 }
-                else if (DTXFile.Header.ImgType == 1 )
+                else if (DTXFile.Header.ImgType == 3)
                 {
                     for (int imgidx = 0; imgidx < DTXFile.Header.ImgCount; ++imgidx)
                     {
