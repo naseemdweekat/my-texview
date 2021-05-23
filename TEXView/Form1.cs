@@ -92,7 +92,7 @@ namespace TEXView
                             outStream.Flush();
                             outStream.Dispose();
                         }
-                        Console.WriteLine(_filenum++.ToString("D4"));
+                        Console.WriteLine(_filenum.ToString("D4"));
                     }
 
                     Byte[] _filedata2 = _filedata.Skip(4).ToArray();
@@ -153,6 +153,7 @@ namespace TEXView
                         }
                         //Console.WriteLine(string.Format("Filenum {0} Ver:{1} Type:{2}", _filenum++,_f.Header.Version, _f.Header.ImgType));
                     }
+                    _filenum++;
                 }
                 while (_datsource.Position < _datsource.Length);
 

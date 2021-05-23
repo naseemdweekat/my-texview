@@ -150,7 +150,7 @@ namespace TEXView
         private bool BuildImage()
         {
             MemoryStream ms = null;
-            if (DTXFile.Header.ImgType != 1)
+            if (DTXFile.Header.ImgType != 3)
             {
                 ms = new MemoryStream(DTXFile.DataStorage);
             }
@@ -177,7 +177,7 @@ namespace TEXView
                     System.Drawing.Bitmap ImgP = new System.Drawing.Bitmap(_i.Info.Width, _i.Info.Height, PixelFormat.Format24bppRgb);
                     for (int ChkIdx = 0; ChkIdx < _i.Info.ChunkCount; ++ChkIdx)
                     {
-                        if (DTXFile.Header.ImgType != 1)
+                        if (DTXFile.Header.ImgType != 3)
                         {
                             ChunkInfo nChk = (ChunkInfo)_i.ChunkList[ChkIdx];
                             int _Row = nChk.Row;
@@ -188,6 +188,19 @@ namespace TEXView
 
                             Raw.CopyTo(ImgD, _Row * _i.Info.Width + _Pos);
                         }
+                        /*else if (DTXFile.Header.ImgType == 1 && DTXFile.Header.Version != 8 && DTXFile.Header.Version != 7) {
+                            ChunkInfo nChk = (ChunkInfo)_i.ChunkList[ChkIdx];
+                            int _Row = nChk.Row;
+                            int _Pos = nChk.Pos;
+
+                            Byte[] Raw = new Byte[nChk.ChunkSize];
+                            //for (int i = 0; i < Raw.Length; i++) {
+                            //    Raw[i] = 0xC9;
+                            //}
+                            ReadBytes(ms, (uint)nChk.ChunkSize, ref Raw);
+
+                            Raw.CopyTo(ImgD, _Row * _i.Info.Width + _Pos);
+                        }*/
                         else
                         {
                             ChunkInfoT3 nChk = (ChunkInfoT3)_i.ChunkList[ChkIdx];
