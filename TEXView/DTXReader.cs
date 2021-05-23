@@ -150,7 +150,7 @@ namespace TEXView
         private bool BuildImage()
         {
             MemoryStream ms = null;
-            if (DTXFile.Header.ImgType != 3)
+            if (DTXFile.Header.ImgType != 1)
             {
                 ms = new MemoryStream(DTXFile.DataStorage);
             }
@@ -177,7 +177,7 @@ namespace TEXView
                     System.Drawing.Bitmap ImgP = new System.Drawing.Bitmap(_i.Info.Width, _i.Info.Height, PixelFormat.Format24bppRgb);
                     for (int ChkIdx = 0; ChkIdx < _i.Info.ChunkCount; ++ChkIdx)
                     {
-                        if (DTXFile.Header.ImgType != 3)
+                        if (DTXFile.Header.ImgType != 1)
                         {
                             ChunkInfo nChk = (ChunkInfo)_i.ChunkList[ChkIdx];
                             int _Row = nChk.Row;
@@ -235,7 +235,7 @@ namespace TEXView
             return true;
         }
 
-        public bool Open(Stream _stream)
+        public bool Open(Stream _stream, bool writeToFile = false, string filePath = "")
         {
             DTXFile.Header = new DTXHeader();
             DTXFile.ImgLists = new List<ImgInfo>();
@@ -246,7 +246,19 @@ namespace TEXView
             Int16 Hzip = _br.ReadInt16();
             MemoryStream _decompress;
             DecompressData(_stream, out _decompress);
+            
             _stream = _decompress;
+
+            if (writeToFile)
+            {
+                Stream dtxWriter = new FileStream(filePath, FileMode.Create,
+                                                             FileAccess.Write, FileShare.Write);
+                //dtxWriter.Write(_stream., 0, _stream.Length);
+                _stream.CopyTo(dtxWriter);
+                _stream.Position = 0;
+                dtxWriter.Flush();
+                dtxWriter.Dispose();
+            }
 
             Read<DTXHeader>(_stream, ref DTXFile.Header);
 
@@ -318,7 +330,7 @@ namespace TEXView
                     //!--This type all image as big image.
                     DTXFile.Header.ImgCount = 1;
                 }
-                else if (DTXFile.Header.ImgType == 3 )
+                else if (DTXFile.Header.ImgType == 1 )
                 {
                     for (int imgidx = 0; imgidx < DTXFile.Header.ImgCount; ++imgidx)
                     {
@@ -390,6 +402,21 @@ namespace TEXView
             }
            
             return true;
+        }
+
+        public Stream Decompress(Stream _stream) {
+
+            DTXFile.Header = new DTXHeader();
+            DTXFile.ImgLists = new List<ImgInfo>();
+            DTXFile.ImageDefineLists = new List<Object>();
+
+            BinaryReader _br = new BinaryReader(_stream);
+            //UInt32 _ZipSize = _br.ReadUInt32(); //!--Test
+            Int16 Hzip = _br.ReadInt16();
+            MemoryStream _decompress;
+            DecompressData(_stream, out _decompress);
+
+            return _decompress;
         }
     }
 }
