@@ -86,13 +86,13 @@ namespace TEXView
                             {
                                 Directory.CreateDirectory(DTXZipOutPath);
                             }
-                            Stream outStream = new FileStream(DTXZipOutPath + "\\" + _filenum.ToString("D4") + ".dtx.zip", FileMode.Create,
+                            Stream outStream = new FileStream(DTXZipOutPath + "\\" + _filenum.ToString("D5") + ".dtx.zip", FileMode.Create,
                                                               FileAccess.Write, FileShare.Write);
                             outStream.Write(_filedata, 0, d.CompressSize + 4);
                             outStream.Flush();
                             outStream.Dispose();
                         }
-                        Console.WriteLine(_filenum.ToString("D4"));
+                        Console.WriteLine(_filenum.ToString("D5"));
                     }
 
                     Byte[] _filedata2 = _filedata.Skip(4).ToArray();
@@ -117,7 +117,7 @@ namespace TEXView
 
                     if (dumpDTXFiles)
                     {
-                        Stream dtxWriter = new FileStream(DTXOutPath + "\\" + _filenum.ToString("D4") + ".dtx", FileMode.Create,
+                        Stream dtxWriter = new FileStream(DTXOutPath + "\\" + _filenum.ToString("D5") + ".dtx", FileMode.Create,
                                                              FileAccess.Write, FileShare.Write);
                         dtxWriter.Write(dtxBytes, 0, dtxBytes.Length);
                         dtxWriter.Flush();
@@ -126,7 +126,7 @@ namespace TEXView
                     //Console.WriteLine(_filenum.ToString("D4") + ".dtx");
 
                     if (dumpImagesSeparateFolders || dumpImagesSingleFolder) {
-                        if (_f.ReadFromStream(_mf2, true, DTXOutPath + "\\" + _filenum.ToString("D4") + ".dtx"))
+                        if (_f.ReadFromStream(_mf2))
                         {
                             string SingleFolderOutPath = destFolderPath + "\\SingleFolderOutput";                            
                             for (int imgidx = 0; imgidx < _f.ImgLists.Count; ++imgidx)
@@ -146,11 +146,13 @@ namespace TEXView
                                     {
                                         Directory.CreateDirectory(SingleFolderOutPath);
                                     }
-                                    _i.Img.Save(SingleFolderOutPath + "\\" + _filenum.ToString("D4") + "-" + string.Format("{0}.png", imgidx), ImageFormat.Png);
+                                    _i.Img.Save(SingleFolderOutPath + "\\" + _filenum.ToString("D5") + "-" + string.Format("{0}.png", imgidx), ImageFormat.Png);
                                 }
                                 _i.Img.Dispose();
+                                
                             }
                         }
+                        _f = new DTXFile();
                         //Console.WriteLine(string.Format("Filenum {0} Ver:{1} Type:{2}", _filenum++,_f.Header.Version, _f.Header.ImgType));
                     }
                     _filenum++;

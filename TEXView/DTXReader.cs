@@ -173,11 +173,30 @@ namespace TEXView
                 }
                 else
                 {
-                    Byte[] ImgD = Enumerable.Repeat((byte)DTXFile.FuchsiaIdx, _i.Info.Width * _i.Info.Height * DTXFile.Header.ImgType).ToArray();
+                    Byte[] ImgD;
+                    if (DTXFile.Header.ImgType == 1 && DTXFile.Header.Version != 8 && DTXFile.Header.Version != 7)
+                    {
+                        ImgD = Enumerable.Repeat((byte)DTXFile.FuchsiaIdx, _i.Info.Width * _i.Info.Height * (DTXFile.Header.ImgType * 2)).ToArray();
+                    }
+                    else
+                    {
+                        ImgD = Enumerable.Repeat((byte)DTXFile.FuchsiaIdx, _i.Info.Width * _i.Info.Height * DTXFile.Header.ImgType).ToArray();
+                    }
                     System.Drawing.Bitmap ImgP = new System.Drawing.Bitmap(_i.Info.Width, _i.Info.Height, PixelFormat.Format24bppRgb);
                     for (int ChkIdx = 0; ChkIdx < _i.Info.ChunkCount; ++ChkIdx)
                     {
-                        if (DTXFile.Header.ImgType != 3)
+                        if (DTXFile.Header.ImgType == 1)
+                        {
+                            ChunkInfo nChk = (ChunkInfo)_i.ChunkList[ChkIdx];
+                            int _Row = nChk.Row;
+                            int _Pos = nChk.Pos;
+
+                            Byte[] Raw = new Byte[nChk.ChunkSize * 2];
+                            ReadBytes(ms, (uint)nChk.ChunkSize * 2, ref Raw);
+                            Raw.CopyTo(ImgD, (_Row * 2) * _i.Info.Width + (_Pos * 2));
+                        }
+                        
+                        else if (DTXFile.Header.ImgType != 3)
                         {
                             ChunkInfo nChk = (ChunkInfo)_i.ChunkList[ChkIdx];
                             int _Row = nChk.Row;
@@ -188,19 +207,6 @@ namespace TEXView
 
                             Raw.CopyTo(ImgD, _Row * _i.Info.Width + _Pos);
                         }
-                        /*else if (DTXFile.Header.ImgType == 1 && DTXFile.Header.Version != 8 && DTXFile.Header.Version != 7) {
-                            ChunkInfo nChk = (ChunkInfo)_i.ChunkList[ChkIdx];
-                            int _Row = nChk.Row;
-                            int _Pos = nChk.Pos;
-
-                            Byte[] Raw = new Byte[nChk.ChunkSize];
-                            //for (int i = 0; i < Raw.Length; i++) {
-                            //    Raw[i] = 0xC9;
-                            //}
-                            ReadBytes(ms, (uint)nChk.ChunkSize, ref Raw);
-
-                            Raw.CopyTo(ImgD, _Row * _i.Info.Width + _Pos);
-                        }*/
                         else
                         {
                             ChunkInfoT3 nChk = (ChunkInfoT3)_i.ChunkList[ChkIdx];
@@ -221,7 +227,22 @@ namespace TEXView
                         }
                     }
 
-                    if (DTXFile.Header.ImgType != 3)
+                    if (DTXFile.Header.ImgType == 1)
+                    {
+                        Bitmap _bp = null;
+                        if (DTXFile.Palette != null)
+                        {
+                            _bp = BitmapExtensions.BitmapSourceFromArrayIndex(ImgD, _i.Info.Width, _i.Info.Height, DTXFile.Header.ImgType * 16, DTXFile.Palette);
+                        }
+                        else
+                        {
+                            _bp = BitmapExtensions.BitmapSourceFromArray(ImgD, _i.Info.Width, _i.Info.Height, DTXFile.Header.ImgType * 16);
+                        }
+
+                        Bitmap bm = new Bitmap(_bp);
+                        _i.Img = bm;
+                    }
+                    else if (DTXFile.Header.ImgType != 3)
                     {
                         Bitmap _bp = null;
                         if (DTXFile.Palette != null)
@@ -244,7 +265,7 @@ namespace TEXView
 
                 DTXFile.ImgLists[imgidx] = _i;
             }
-
+            ms.Dispose();
             return true;
         }
 
@@ -308,7 +329,7 @@ namespace TEXView
                         }
                     }
                     DTXFile.Palette = new BitmapPalette(colors);
-                    //bm2.Save("E:\\p" + string.Format("\\{0}.bmp", DTXFile.Header.ImgType), ImageFormat.Bmp);
+                    //bm2.Save("E:\\TalesWeaver Tools\\jtw dump" + string.Format("\\{0}.bmp", DateTimeOffset.Now.ToUnixTimeMilliseconds()), ImageFormat.Bmp);
                 }
 
                 if (DTXFile.Header.ImgType ==0)
