@@ -84,6 +84,7 @@
             this.rbImagesSeparateFolder.TabStop = true;
             this.rbImagesSeparateFolder.Text = "Dump Images (separate folders)";
             this.rbImagesSeparateFolder.UseVisualStyleBackColor = true;
+            this.rbImagesSeparateFolder.Click += new System.EventHandler(this.rbImagesSeparateFolder_Click);
             // 
             // rbImagesSingleFolder
             // 
@@ -95,6 +96,7 @@
             this.rbImagesSingleFolder.TabStop = true;
             this.rbImagesSingleFolder.Text = "Dump Images (single folder)";
             this.rbImagesSingleFolder.UseVisualStyleBackColor = true;
+            this.rbImagesSingleFolder.Click += new System.EventHandler(this.rbImagesSingleFolder_Click);
             // 
             // rbDumpDTX
             // 
@@ -106,6 +108,7 @@
             this.rbDumpDTX.TabStop = true;
             this.rbDumpDTX.Text = "Dump DTX Files";
             this.rbDumpDTX.UseVisualStyleBackColor = true;
+            this.rbDumpDTX.Click += new System.EventHandler(this.rbDumpDTX_Click);
             // 
             // rbDumpDTXZipFiles
             // 
@@ -117,6 +120,7 @@
             this.rbDumpDTXZipFiles.TabStop = true;
             this.rbDumpDTXZipFiles.Text = "Dump DTX.Zip Files";
             this.rbDumpDTXZipFiles.UseVisualStyleBackColor = true;
+            this.rbDumpDTXZipFiles.Click += new System.EventHandler(this.rbDumpDTXZipFiles_Click);
             // 
             // Form1
             // 

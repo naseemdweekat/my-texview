@@ -114,7 +114,7 @@ namespace TEXView
                     Stream dtxOutStream = _dtxout.ReadFromStreamAndDecompress(_mf);
                     Byte[] dtxBytes = new Byte[dtxOutStream.Length];
                     dtxOutStream.Read(dtxBytes, 0, (int)dtxOutStream.Length);
-
+                    dtxOutStream.Dispose();
                     if (dumpDTXFiles)
                     {
                         Stream dtxWriter = new FileStream(DTXOutPath + "\\" + _filenum.ToString("D5") + ".dtx", FileMode.Create,
@@ -149,13 +149,14 @@ namespace TEXView
                                     _i.Img.Save(SingleFolderOutPath + "\\" + _filenum.ToString("D5") + "-" + string.Format("{0}.png", imgidx), ImageFormat.Png);
                                 }
                                 _i.Img.Dispose();
-                                
                             }
+                            _f.ImgLists.Clear();
                         }
-                        _f = new DTXFile();
                         //Console.WriteLine(string.Format("Filenum {0} Ver:{1} Type:{2}", _filenum++,_f.Header.Version, _f.Header.ImgType));
                     }
                     _filenum++;
+                    _mf.Dispose();
+                    _mf2.Dispose();
                 }
                 while (_datsource.Position < _datsource.Length);
 
@@ -205,6 +206,34 @@ namespace TEXView
                 txtDestFolder.Text = String.Empty;
             }
             destSrc.Dispose();
+        }
+
+        private void rbImagesSeparateFolder_Click(object sender, EventArgs e)
+        {
+            rbDumpDTX.Checked = false;
+            rbDumpDTXZipFiles.Checked = false;
+            rbImagesSingleFolder.Checked = false;
+        }
+
+        private void rbImagesSingleFolder_Click(object sender, EventArgs e)
+        {
+            rbDumpDTX.Checked = false;
+            rbDumpDTXZipFiles.Checked = false;
+            rbImagesSeparateFolder.Checked = false;
+        }
+
+        private void rbDumpDTX_Click(object sender, EventArgs e)
+        {
+            rbDumpDTXZipFiles.Checked = false;
+            rbImagesSeparateFolder.Checked = false;
+            rbImagesSingleFolder.Checked = false;
+        }
+
+        private void rbDumpDTXZipFiles_Click(object sender, EventArgs e)
+        {
+            rbDumpDTX.Checked = false;
+            rbImagesSeparateFolder.Checked = false;
+            rbImagesSingleFolder.Checked = false;
         }
     }
 }

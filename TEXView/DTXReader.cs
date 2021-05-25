@@ -156,7 +156,7 @@ namespace TEXView
             }
 
             for (int imgidx = 0; imgidx < DTXFile.Header.ImgCount; ++imgidx)
-            {
+                              {
                 ImgInfo _i = DTXFile.ImgLists[imgidx];
 
                 if(_i.Info.Width == 0 || _i.Info.Height == 0 )
@@ -241,6 +241,7 @@ namespace TEXView
 
                         Bitmap bm = new Bitmap(_bp);
                         _i.Img = bm;
+                        _bp.Dispose();
                     }
                     else if (DTXFile.Header.ImgType != 3)
                     {
@@ -256,6 +257,7 @@ namespace TEXView
 
                         Bitmap bm = new Bitmap(_bp);
                         _i.Img = bm;
+                        _bp.Dispose();
                     }
                     else
                     {
