@@ -1,0 +1,12 @@
+# appveyor.yml
+version: 1.0.{build}
+image: Visual Studio 2022
+
+build_script:
+  # Build the TEXView solution in Release mode
+  - msbuild TEXView\TEXView.sln /p:Configuration=Release
+
+artifacts:
+  # Take any .exe in the Release folder and make it downloadable
+  - path: TEXView\bin\Release\*.exe
+    name: TEXView
