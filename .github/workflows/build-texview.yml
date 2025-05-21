@@ -1,0 +1,36 @@
+name: Build TEXView EXE
+
+# Trigger on any push to the TEXView folder
+on:
+  push:
+    paths:
+      - 'TEXView/**'
+
+jobs:
+  build:
+    # Use a Windows VM for building .NET WinForms
+    runs-on: windows-latest
+
+    steps:
+    - name: Check out source code
+      uses: actions/checkout@v3
+
+    - name: Set up NuGet (for any packages)
+      uses: NuGet/setup-nuget@v1
+
+    - name: Restore NuGet packages
+      run: nuget restore TEXView.sln
+
+    - name: Build in Release mode
+      run: msbuild TEXView.sln /p:Configuration=Release
+
+    - name: Gather EXE
+      run: |
+        mkdir out
+        copy TEXView\bin\Release\TEXView.exe out\
+
+    - name: Upload EXE artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: TEXView-exe
+        path: out/TEXView.exe
