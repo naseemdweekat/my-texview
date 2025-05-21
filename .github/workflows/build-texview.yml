@@ -1,0 +1,36 @@
+name: Build TEXView EXE
+
+on:
+  # Build on every push to main:
+  push:
+    branches: [ main ]
+  # Also allow manual runs:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Check out source
+      uses: actions/checkout@v3
+
+    - name: Set up NuGet
+      uses: NuGet/setup-nuget@v1
+
+    - name: Restore packages
+      run: nuget restore TEXView.sln
+
+    - name: Build Release
+      run: msbuild TEXView.sln /p:Configuration=Release
+
+    - name: Package EXE
+      run: |
+        mkdir out
+        copy TEXView\bin\Release\TEXView.exe out\
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v3
+      with:
+        name: TEXView-exe
+        path: out/TEXView.exe
